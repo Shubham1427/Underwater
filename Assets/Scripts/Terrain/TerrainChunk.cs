@@ -6,12 +6,14 @@ using System.Threading;
 public class TerrainChunk : MonoBehaviour
 {
     UnderwaterTerrain terrain;
+    Biomes biomesHandler;
 
     MeshFilter meshFilter;
     MeshRenderer meshRenderer;
     MeshCollider meshCollider;
     Mesh mesh;
     List<Vector3> vertices = new List<Vector3>();
+    List<Vector2> uvs = new List<Vector2>();
     List<int> triangles = new List<int>();
     float[,,] chunkDensityMap;
     float [,] scaledHeightMap;
@@ -47,9 +49,37 @@ public class TerrainChunk : MonoBehaviour
         return scaledHeightMap[samplePos.x, samplePos.z];
     }
 
+    Vector2 CalculateBiomeUVs (Vector3 pos)
+    {
+        Vector3Int posRelativeToChunk = new Vector3Int ((int)(pos.x - position.x), 0, (int)(pos.z - position.z));
+        float[] biomesValue = new float [biomesHandler.biomes.Length];
+        int maxBiomeIndex = biomesHandler.CalculateBiome(pos, scaledHeightMap[posRelativeToChunk.x, posRelativeToChunk.z], biomesValue);
+        float maxblend = biomesValue[maxBiomeIndex];
+        float secondMaxBlend = 0f;
+        int secondMaxBiomeIndex = -1;
+
+        for (int i=0; i<biomesHandler.biomes.Length; i++)
+        {
+            if (biomesValue[i] > secondMaxBlend && biomesValue[i] < maxblend)
+            {
+                secondMaxBlend = biomesValue[i];
+                secondMaxBiomeIndex = i;
+            }
+        }
+        if (secondMaxBiomeIndex == -1)
+        {
+            secondMaxBiomeIndex = maxBiomeIndex;
+            secondMaxBlend = maxblend;
+        }
+        float sum = maxblend + secondMaxBlend;
+        return new Vector2 (maxBiomeIndex, 0);
+        // return new Vector2 (maxBiomeIndex + maxblend/sum, secondMaxBiomeIndex + secondMaxBlend/sum);
+    }
+
     public void Init(UnderwaterTerrain t, Vector3Int pos)
     {
         terrain = t;
+        biomesHandler = t.GetComponent<Biomes>();
         coords = pos;
         transform.position = terrain.terrainCentre + coords * terrain.chunkSize - new Vector3(1f, 0f, 1f) * terrain.chunkSize / 2f;
         transform.parent = terrain.transform;
@@ -231,7 +261,11 @@ public class TerrainChunk : MonoBehaviour
             int vertexIndex = CheckDuplicateVertex(vertexPoint);
             if (vertexIndex == -1)
             {
-                vertices.Add(vertexPoint);
+                vertices.Add(vertexPoint);    
+                Vector2 vertAUvs = CalculateBiomeUVs(position + vertA);          
+                Vector2 vertBUvs = CalculateBiomeUVs(position + vertB);
+                Vector2 lerpedUvs = Vector2.Lerp(vertAUvs, vertBUvs, lerpAmount);
+                uvs.Add(new Vector2 (Mathf.RoundToInt(lerpedUvs.x), 0));
                 triangles.Add(vertices.Count - 1);
             }
             else
@@ -252,6 +286,7 @@ public class TerrainChunk : MonoBehaviour
         mesh.Clear();
         vertices.Clear();
         triangles.Clear();
+        uvs.Clear();
     }
 
     void CreateMesh()
@@ -260,6 +295,7 @@ public class TerrainChunk : MonoBehaviour
             mesh = new Mesh();
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
+        mesh.uv = uvs.ToArray();
         mesh.RecalculateNormals();
     }
 }

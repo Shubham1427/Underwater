@@ -22,7 +22,7 @@ public class DebugInfo : MonoBehaviour
 
             TerrainChunk playerChunk = terrain.GetChunkFromCoords(terrain.playerChunkCoords);
             // biomeText.text = "Biome: "+playerChunk.SampleScaledHeightMap(player.transform.position);
-            biomeText.text = "Biome: " + biomesHandler.CalculateBiome(playerChunk.SampleScaledHeightMap(player.transform.position));
+            biomeText.text = "Biome: " + biomesHandler.CalculateBiomeName(player.transform.position, playerChunk.SampleScaledHeightMap(player.transform.position));
         }
     }
 

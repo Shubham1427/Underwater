@@ -8,4 +8,6 @@ public class Biome
     public string name;
 
     public AnimationCurve biomeHeightMask;
+    public float noiseAmplitude, noiseFrequency;
+    public Texture2D biomeGroundTexture;
 }

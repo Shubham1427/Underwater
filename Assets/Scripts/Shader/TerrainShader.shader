@@ -3,8 +3,7 @@ Shader "Unlit/TerrainUnlitShader"
     Properties
     {
         _RockTexture ("Rock Texture", 2D) = "black"
-        _GrassTexture ("Grass Texture", 2D) = "black"
-        _SandTexture ("Sand Texture", 2D) = "black"
+        _BiomesTextureArray ("Biomes textures", 2DArray) = "" {}
         _TriplanarBlendSharpness ("Blend Sharpness",float) = 1
     }
     SubShader
@@ -40,8 +39,7 @@ Shader "Unlit/TerrainUnlitShader"
             };
 
             sampler2D _RockTexture;
-            sampler2D _GrassTexture;
-            sampler2D _SandTexture;
+            UNITY_DECLARE_TEX2DARRAY(_BiomesTextureArray);
 
             float _TriplanarBlendSharpness;
             int _IsPlayerUnderwater;
@@ -66,17 +64,18 @@ Shader "Unlit/TerrainUnlitShader"
                 o.normal = mul(v.normal, (float3x3)unity_WorldToObject);
                 o.normal = normalize(o.normal);
                 o.worldPos = mul (unity_ObjectToWorld, v.vertex).xyz;
+
                 return o;
             }
 
             fixed4 frag (v2f i) : SV_Target
             {
                 fixed4 c;
-
-                fixed4 grass = tex2D(_GrassTexture, i.worldPos.xz/5);
+                
                 fixed4 rock1 = tex2D(_RockTexture, i.worldPos.xy/100);
                 fixed4 rock2 = tex2D(_RockTexture, i.worldPos.yz/100);
-                fixed4 sand = tex2D(_SandTexture, i.worldPos.xz/10);
+
+                fixed4 biomeTex = UNITY_SAMPLE_TEX2DARRAY(_BiomesTextureArray, float3 (i.worldPos.xz/10, round(i.uv.x)));
 
                 // c = fixed4 (i.worldPos/100, 1);
                 // c = grass;
@@ -89,7 +88,7 @@ Shader "Unlit/TerrainUnlitShader"
 
                 blendWeights = blendWeights / (blendWeights.x + blendWeights.y + blendWeights.z);
 
-                c.rgb = lerp(sand, grass, height) * blendWeights.y + rock1 * blendWeights.z + rock2 * blendWeights.x;
+                c.rgb = biomeTex * blendWeights.y + rock1 * blendWeights.z + rock2 * blendWeights.x;
                 // float lerpAmount = saturate(abs(i.normal.y) - 0.1f + (i.worldPos.y - 64) / 128);
                 // c = lerp(_RockColor, _GrassColor, lerpAmount);
 
