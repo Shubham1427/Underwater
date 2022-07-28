@@ -7,7 +7,16 @@ public class UnderwaterTerrain : MonoBehaviour
     public Material terrainMaterial;
     public int chunkSize, terrainHeight, viewDistanceInChunks;
     public int minHeight, maxHeight;
-    public AnimationCurve cavesHeightCurve, heightMapCurve, cavesDensityCurve;
+    public AnimationCurve heightMapCurve;
+
+    [Header("Caves Noise Settings")]
+    public AnimationCurve cavesHeightCurve;
+    public AnimationCurve cavesDensityCurve;
+
+    [Header("Overhangs Noise Settings")]
+    public AnimationCurve overhangsHeightCurve;
+    public AnimationCurve overhangsDensityCurve;
+
     public Vector3Int terrainCentre;
     public Player player;
     Dictionary<Vector3Int, TerrainChunk> activeChunks;

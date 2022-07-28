@@ -24,7 +24,7 @@ public class TerrainChunk : MonoBehaviour
         }
     }
     bool meshDataReady = false, meshRendered = false;
-    AnimationCurve heightMapCurve, cavesDensityCurve, cavesHeightCurve;
+    AnimationCurve heightMapCurve, cavesDensityCurve, cavesHeightCurve, overhangsHeightCurve, overhangsDensityCurve;
 
     void Update()
     {
@@ -48,7 +48,9 @@ public class TerrainChunk : MonoBehaviour
 
         heightMapCurve = new AnimationCurve(terrain.heightMapCurve.keys);
         cavesDensityCurve = new AnimationCurve(terrain.cavesDensityCurve.keys);
+        overhangsDensityCurve = new AnimationCurve(terrain.overhangsDensityCurve.keys);
         cavesHeightCurve = new AnimationCurve(terrain.cavesHeightCurve.keys);
+        overhangsHeightCurve = new AnimationCurve(terrain.overhangsHeightCurve.keys);
 
         meshDataReady = false;
         meshRendered = false;
@@ -77,42 +79,6 @@ public class TerrainChunk : MonoBehaviour
             }
         }
     }
-    // void CalcluateElevation (Vector2 pos, ref float minHeight, ref float maxHeight)
-    // {
-    //     Vector3 samplePointMinHeight = new Vector3((position.x + pos.x + 0.023f) * 0.001f, 0f, (position.z + pos.y + 0.009f) * 0.001f);
-    //     Vector3 samplePointMaxHeight = new Vector3((position.x + pos.x + 0.005f) * 0.001f, 0f, (position.z + pos.y + 0.056f) * 0.001f);
-
-    //     float noiseMinHeight = Utils.ScaleTo_0_1(-1f, 1f, Utils.Get3DNoise(noiseGenerator, samplePointMinHeight, 1)) * 15f;
-    //     float noiseMaxHeight = Utils.ScaleTo_0_1(-1f, 1f, Utils.Get3DNoise(noiseGenerator, samplePointMinHeight, 1)) * 15f;
-
-    //     minHeight += noiseMinHeight;
-    //     maxHeight -= noiseMaxHeight;
-    // }
-
-    // float NoiseOld (int x, int y, int z)
-    // {
-    //     float minHeight = terrain.minHeight, maxHeight = terrain.maxHeight;
-    //     CalcluateElevation(new Vector2 (x, z), ref minHeight, ref maxHeight);
-
-    //     float noise = 0f;
-    //     Vector3 samplePoint = new Vector3((position.x + x + 0.015f) * 0.03f, (y + 0.012f) * 0.04f, (position.z + z + 0.018f) * 0.03f);
-    //     // noise = Utils.Get3DNoise(noiseGenerator, samplePoint, 1);
-    //     // samplePoint += new Vector3 (noise, noise, noise) * 0.25f;
-    //     noise = Utils.Get3DNoise(noiseGenerator, samplePoint, 4);
-
-    //     if (y < minHeight)
-    //     {
-    //         // noise += (float)(y - minHeight) / minHeight;
-    //         noise = -1f;
-    //     }
-    //     else if (y > maxHeight)
-    //     {
-    //         // noise += (float)(y - maxHeight) / (terrain.terrainHeight - maxHeight);
-    //         noise = 1f;
-    //     }
-    //     // noise += (y - terrainHeight * 0.5f) / terrainHeight;
-    //     return noise;
-    // }
 
     float NoiseNew(int x, int y, int z)
     {
@@ -141,21 +107,38 @@ public class TerrainChunk : MonoBehaviour
         height = Mathf.Clamp(height, 1f, terrain.terrainHeight - 1);
 
         float returnValue = (y - height) / terrain.terrainHeight;
-        float caveDensityInput = (y - height);
-        if (caveDensityInput < 0f)
-            caveDensityInput /= height;
+        
+        float scaledHeight = (y - height);
+        if (scaledHeight < 0f)
+            scaledHeight /= height;
         else
-            caveDensityInput /= terrain.terrainHeight - height;
+            scaledHeight /= terrain.terrainHeight - height;
 
+        //Overhangs noise
+
+        //Variable frequency
+        frequency = 0.0075f;
+        samplePoint = new Vector3((position.x + x + 6.443f), y + 6.45343f, (position.z + z + 7.2643f)) * frequency;
+        frequency = 0.0125f + Utils.Get3DNoise(noiseGenerator, samplePoint, 1) * 0.006f;
+
+        //Overhang noise calculation
+        samplePoint = new Vector3((position.x + x + 3.4523f), y + 0.433f, (position.z + z + 2.347f)) * frequency;
+        noise = (Utils.Get3DNoise(noiseGenerator, samplePoint, 1) + 1f) / 2f;
+
+        //Variable amplitude
+        frequency = 0.0075f;
+        samplePoint = new Vector3((position.x + x + 6.2343f), y + 34.2365f, (position.z + z + 234.43986f)) * frequency;
+        float amplitude = 0.15f + Utils.Get3DNoise(noiseGenerator, samplePoint, 1) * 0.025f;
+
+        returnValue -= overhangsHeightCurve.Evaluate((float)height / terrain.terrainHeight) * overhangsDensityCurve.Evaluate(scaledHeight) * noise * amplitude;
+        
         //Caves Noise
+
         frequency = 0.015f;
         samplePoint = new Vector3((position.x + x + 0.0244f), y + 0.735f, (position.z + z + 0.055f)) * frequency;
         noise = (Utils.Get3DNoise(noiseGenerator, samplePoint, 1) + 1f) / 2f;
 
-        returnValue += cavesHeightCurve.Evaluate((float)height / terrain.terrainHeight) * cavesDensityCurve.Evaluate(caveDensityInput) * noise * 0.6f;
-
-        //Overhangs noise
-        // returnValue -= terrain.cavesDensityCurve.Evaluate(-returnValue) * noise * 0.3f;
+        returnValue += cavesHeightCurve.Evaluate((float)height / terrain.terrainHeight) * cavesDensityCurve.Evaluate(scaledHeight) * noise * 0.6f;
 
         return returnValue;
         // return Mathf.Clamp(returnValue, -1f, 1f);
