@@ -12,6 +12,13 @@ public class Player : MonoBehaviour
             return transform.position.y + 0.125f <= ocean.oceanLevel;    
         }
     }
+    public float depth
+    {
+        get
+        {
+            return ocean.oceanLevel - transform.position.y;
+        }
+    }
     public Camera playerCam;
     public Rigidbody rb;
 
@@ -20,6 +27,9 @@ public class Player : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         playerCam = GetComponentInChildren<Camera>();
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     // Update is called once per frame

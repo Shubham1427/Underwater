@@ -19,17 +19,34 @@ public class UnderwaterTerrain : MonoBehaviour
 
     public Vector3Int terrainCentre;
     public Player player;
+    public Vector3Int playerChunkCoords
+    {
+        get
+        {
+            return new Vector3Int(Mathf.FloorToInt((player.transform.position.x - chunkSize / 2f) / chunkSize) + 1, 0, Mathf.FloorToInt((player.transform.position.z - chunkSize / 2f) / chunkSize) + 1);
+        }
+    }
     Dictionary<Vector3Int, TerrainChunk> activeChunks;
     Vector3Int lastPlayerChunkCoords;
+    bool updatingChunks = false;
+
+    public TerrainChunk GetChunkFromCoords (Vector3Int coords)
+    {
+        if (activeChunks.ContainsKey(coords))
+            return activeChunks[coords];
+        
+        return null;
+    }
 
     IEnumerator UpdateActiveChunks()
     {
         while (true)
         {
-            Vector3Int playerChunkCoords = new Vector3Int(Mathf.FloorToInt((player.transform.position.x - chunkSize / 2f) / chunkSize) + 1, 0, Mathf.FloorToInt((player.transform.position.z - chunkSize / 2f) / chunkSize) + 1);
             //Player has moved to a different chunk
-            if (playerChunkCoords != lastPlayerChunkCoords)
+            if (playerChunkCoords != lastPlayerChunkCoords && !updatingChunks)
             {
+                updatingChunks = true;
+
                 //Destroy chunks that are too far away
                 List<Vector3Int> chunksToDestroy = new List<Vector3Int>();
                 foreach (Vector3Int chunkCoords in activeChunks.Keys)
@@ -43,14 +60,13 @@ public class UnderwaterTerrain : MonoBehaviour
                         chunksToDestroy.Add(chunkCoords);
                         Destroy(chunk.gameObject);
                     }
-                    yield return new WaitForSeconds (0.01f);
+                    yield return new WaitForSeconds (0.02f);
                 }
                 foreach (Vector3Int chunkCoord in chunksToDestroy)
                 {
                     activeChunks.Remove(chunkCoord);
-                    yield return new WaitForSeconds (0.01f);
+                    yield return new WaitForSeconds (0.02f);
                 }
-                chunksToDestroy.Clear();
 
                 //Create new chunks that are now closer to player
                 for (int x = playerChunkCoords.x - viewDistanceInChunks / 2; x <= playerChunkCoords.x + viewDistanceInChunks / 2; x++)
@@ -63,12 +79,15 @@ public class UnderwaterTerrain : MonoBehaviour
                         TerrainChunk chunk = new GameObject("Chunk (" + x + ", " + z + ")").AddComponent<TerrainChunk>();
                         chunk.Init(this, coords);
                         activeChunks.Add(coords, chunk);
-                        yield return new WaitForSeconds (0.01f);
+                        yield return new WaitForSeconds (0.03f);
                     }
                 }
-
+                
                 // Set player's last chunk to this chunk
                 lastPlayerChunkCoords = playerChunkCoords;
+                updatingChunks = false;
+                
+                chunksToDestroy.Clear();
             }
             yield return new WaitForSeconds (0.1f);
         }

@@ -14,6 +14,7 @@ public class TerrainChunk : MonoBehaviour
     List<Vector3> vertices = new List<Vector3>();
     List<int> triangles = new List<int>();
     float[,,] chunkDensityMap;
+    float [,] scaledHeightMap;
     Vector3Int coords;
     Noise noiseGenerator = new Noise();
     Vector3 position
@@ -33,6 +34,17 @@ public class TerrainChunk : MonoBehaviour
             CreateMesh();
             UpdateMesh();
         }
+    }
+
+    public float SampleScaledHeightMap (Vector3 pos)
+    {
+        pos -= position;
+        Vector3Int samplePos = new Vector3Int ((int)pos.x, (int)pos.y, (int)(pos.z));
+
+        if (scaledHeightMap == null)
+            return 0f;
+
+        return scaledHeightMap[samplePos.x, samplePos.z];
     }
 
     public void Init(UnderwaterTerrain t, Vector3Int pos)
@@ -108,11 +120,14 @@ public class TerrainChunk : MonoBehaviour
 
         float returnValue = (y - height) / terrain.terrainHeight;
         
-        float scaledHeight = (y - height);
-        if (scaledHeight < 0f)
-            scaledHeight /= height;
+        float scaledDensity = (y - height);
+        if (scaledDensity < 0f)
+            scaledDensity /= height;
         else
-            scaledHeight /= terrain.terrainHeight - height;
+            scaledDensity /= terrain.terrainHeight - height;
+
+        float scaledHeight = height / terrain.terrainHeight;
+        scaledHeightMap[x, z] = scaledHeight;
 
         //Overhangs noise
 
@@ -130,7 +145,7 @@ public class TerrainChunk : MonoBehaviour
         samplePoint = new Vector3((position.x + x + 6.2343f), y + 34.2365f, (position.z + z + 234.43986f)) * frequency;
         float amplitude = 0.15f + Utils.Get3DNoise(noiseGenerator, samplePoint, 1) * 0.025f;
 
-        returnValue -= overhangsHeightCurve.Evaluate((float)height / terrain.terrainHeight) * overhangsDensityCurve.Evaluate(scaledHeight) * noise * amplitude;
+        returnValue -= overhangsHeightCurve.Evaluate(scaledHeight) * overhangsDensityCurve.Evaluate(scaledDensity) * noise * amplitude;
         
         //Caves Noise
 
@@ -138,7 +153,7 @@ public class TerrainChunk : MonoBehaviour
         samplePoint = new Vector3((position.x + x + 0.0244f), y + 0.735f, (position.z + z + 0.055f)) * frequency;
         noise = (Utils.Get3DNoise(noiseGenerator, samplePoint, 1) + 1f) / 2f;
 
-        returnValue += cavesHeightCurve.Evaluate((float)height / terrain.terrainHeight) * cavesDensityCurve.Evaluate(scaledHeight) * noise * 0.6f;
+        returnValue += cavesHeightCurve.Evaluate(scaledHeight) * cavesDensityCurve.Evaluate(scaledDensity) * noise * 0.6f;
 
         return returnValue;
         // return Mathf.Clamp(returnValue, -1f, 1f);
@@ -147,6 +162,7 @@ public class TerrainChunk : MonoBehaviour
     void GenerateChunkDensityMap()
     {
         chunkDensityMap = new float[terrain.chunkSize + 1, terrain.terrainHeight + 1, terrain.chunkSize + 1];
+        scaledHeightMap = new float[terrain.chunkSize + 1, terrain.chunkSize + 1];
 
         for (int x = 0; x <= terrain.chunkSize; x++)
         {
