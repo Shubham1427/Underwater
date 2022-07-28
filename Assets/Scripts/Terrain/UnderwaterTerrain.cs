@@ -5,24 +5,82 @@ using UnityEngine;
 public class UnderwaterTerrain : MonoBehaviour
 {
     public Material terrainMaterial;
-    public int chunkSize, terrainHeight, terrainSizeInChunks;
+    public int chunkSize, terrainHeight, viewDistanceInChunks;
     public int minHeight, maxHeight;
     public AnimationCurve cavesHeightCurve, heightMapCurve, cavesDensityCurve;
     public Vector3Int terrainCentre;
     public Player player;
+    Dictionary<Vector3Int, TerrainChunk> activeChunks;
+    Vector3Int lastPlayerChunkCoords;
 
+    IEnumerator UpdateActiveChunks()
+    {
+        while (true)
+        {
+            Vector3Int playerChunkCoords = new Vector3Int(Mathf.FloorToInt((player.transform.position.x - chunkSize / 2f) / chunkSize) + 1, 0, Mathf.FloorToInt((player.transform.position.z - chunkSize / 2f) / chunkSize) + 1);
+            //Player has moved to a different chunk
+            if (playerChunkCoords != lastPlayerChunkCoords)
+            {
+                //Destroy chunks that are too far away
+                List<Vector3Int> chunksToDestroy = new List<Vector3Int>();
+                foreach (Vector3Int chunkCoords in activeChunks.Keys)
+                {
+                    int relativeX = Mathf.Abs(chunkCoords.x - playerChunkCoords.x);
+                    int relativeZ = Mathf.Abs(chunkCoords.z - playerChunkCoords.z);
+
+                    if (relativeX > viewDistanceInChunks / 2 || relativeZ > viewDistanceInChunks / 2)
+                    {
+                        TerrainChunk chunk = activeChunks[chunkCoords];
+                        chunksToDestroy.Add(chunkCoords);
+                        Destroy(chunk.gameObject);
+                    }
+                    yield return new WaitForSeconds (0.01f);
+                }
+                foreach (Vector3Int chunkCoord in chunksToDestroy)
+                {
+                    activeChunks.Remove(chunkCoord);
+                    yield return new WaitForSeconds (0.01f);
+                }
+                chunksToDestroy.Clear();
+
+                //Create new chunks that are now closer to player
+                for (int x = playerChunkCoords.x - viewDistanceInChunks / 2; x <= playerChunkCoords.x + viewDistanceInChunks / 2; x++)
+                {
+                    for (int z = playerChunkCoords.z - viewDistanceInChunks / 2; z <= playerChunkCoords.z + viewDistanceInChunks / 2; z++)
+                    {
+                        Vector3Int coords = new Vector3Int(x, 0, z);
+                        if (activeChunks.ContainsKey(coords))
+                            continue;
+                        TerrainChunk chunk = new GameObject("Chunk (" + x + ", " + z + ")").AddComponent<TerrainChunk>();
+                        chunk.Init(this, coords);
+                        activeChunks.Add(coords, chunk);
+                        yield return new WaitForSeconds (0.01f);
+                    }
+                }
+
+                // Set player's last chunk to this chunk
+                lastPlayerChunkCoords = playerChunkCoords;
+            }
+            yield return new WaitForSeconds (0.1f);
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        for (int x = -terrainSizeInChunks / 2; x <= terrainSizeInChunks / 2; x++)
+        activeChunks = new Dictionary<Vector3Int, TerrainChunk>();
+        for (int x = -viewDistanceInChunks / 2; x <= viewDistanceInChunks / 2; x++)
         {
-            for (int z = -terrainSizeInChunks / 2; z <= terrainSizeInChunks / 2; z++)
+            for (int z = -viewDistanceInChunks / 2; z <= viewDistanceInChunks / 2; z++)
             {
                 TerrainChunk chunk = new GameObject("Chunk (" + x + ", " + z + ")").AddComponent<TerrainChunk>();
-                chunk.Init(this, new Vector3Int(x, 0, z));
+                Vector3Int coords = new Vector3Int(x, 0, z);
+                chunk.Init(this, coords);
+                activeChunks.Add(coords, chunk);
             }
         }
+        lastPlayerChunkCoords = new Vector3Int(0, 0, 0);
+        StartCoroutine(UpdateActiveChunks());
     }
 
     // Update is called once per frame

@@ -513,6 +513,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sensitivity: {x: 200, y: 400}
+  verticalCameraRotationLimit: 85
 --- !u!1 &1260785447
 GameObject:
   m_ObjectHideFlags: 0
@@ -560,7 +561,7 @@ MonoBehaviour:
   terrainMaterial: {fileID: 2100000, guid: 0427d7f04042ffb42a59013ed59dfe96, type: 2}
   chunkSize: 16
   terrainHeight: 128
-  terrainSizeInChunks: 21
+  viewDistanceInChunks: 15
   minHeight: 12
   maxHeight: 52
   cavesHeightCurve:
