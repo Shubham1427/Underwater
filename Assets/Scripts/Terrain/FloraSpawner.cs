@@ -7,7 +7,6 @@ public class FloraSpawner : MonoBehaviour
     UnderwaterTerrain terrain;
     TerrainChunk chunk;
     Biomes biomesHandler;
-    Noise noiseGenerator = new Noise(5);
 
 
     public void Init(TerrainChunk c, UnderwaterTerrain t, Biomes b)

@@ -20,7 +20,6 @@ public class TerrainChunk : MonoBehaviour
     int[,,] biomesMap;
     float[,] scaledHeightMap;
     Vector3Int coords;
-    Noise noiseGenerator = new Noise();
     public Vector3 position
     {
         get
@@ -133,81 +132,6 @@ public class TerrainChunk : MonoBehaviour
             }
         }
     }
-
-    // float GenerateNoise(int x, int y, int z)
-    // {    
-    //     float noise = 0f, frequency = 0.0025f;
-
-    //     // Calculate height
-    //     Vector3 samplePoint = new Vector3((position.x + x + 42.715f), 63.45f, (position.z + z + 86.918f)) * frequency;
-    //     noise = (Utils.Get3DNoise(noiseGenerator, samplePoint, 1) + 1) / 2f;
-
-    //     noise = heightMapCurve.Evaluate(noise);
-    //     float height = noise * (terrain.terrainHeight - 20f) + 8f;
-
-    //     samplePoint = new Vector3((position.x + x + 0.086f), 53.355f, (position.z + z + 0.28f)) * frequency;
-    //     noise = (Utils.Get3DNoise(noiseGenerator, samplePoint, 1) + 1) / 2f + 0.1f;
-    //     noise = Mathf.Clamp(noise, 0.8f, 1.1f);
-    //     height *= noise;
-
-    //     //Height Map adjustment based on another noise
-    //     frequency = 0.01f;
-    //     samplePoint = new Vector3((position.x + x + 0.068f), 53.65f, (position.z + z + 0.072f)) * frequency;
-    //     height += Utils.Get3DNoise(noiseGenerator, samplePoint, 6) * 10f;
-    //     height = Mathf.Clamp(height, 1f, terrain.terrainHeight - 1);
-
-    //     // Original density at this point
-    //     float returnValue = (y - height) / terrain.terrainHeight;
-
-    //     // density scaled from -1 to 1
-    //     float scaledDensity = (y - height);
-    //     if (scaledDensity < 0f)
-    //         scaledDensity /= height;
-    //     else
-    //         scaledDensity /= terrain.terrainHeight - height;
-
-    //     // Height at this x and z coordinates scaled from 0 to 1
-    //     float scaledHeight = height / terrain.terrainHeight;
-    //     scaledHeightMap[x, z] = scaledHeight;
-
-    //     // Biome at these coordinates
-    //     Vector3 posRelativeToWorld = new Vector3 (position.x + x, y, position.z + z);
-    //     biomesMap[x, y, z] = biomesHandler.CalculateBiome(posRelativeToWorld, scaledHeight, biomesHeightMask);
-
-    //     if (y == terrain.terrainHeight)
-    //         return 1f;
-    //     if (y == 0)
-    //         return -1f;
-
-    //     //Overhangs noise
-
-    //     //Variable frequency
-    //     frequency = 0.0075f;
-    //     samplePoint = new Vector3((position.x + x + 6.443f), y + 6.45343f, (position.z + z + 7.2643f)) * frequency;
-    //     frequency = 0.0125f + Utils.Get3DNoise(noiseGenerator, samplePoint, 1) * 0.006f;
-
-    //     //Overhang noise calculation
-    //     samplePoint = new Vector3((position.x + x + 3.4523f), y + 0.433f, (position.z + z + 2.347f)) * frequency;
-    //     noise = (Utils.Get3DNoise(noiseGenerator, samplePoint, 1) + 1f) / 2f;
-
-    //     //Variable amplitude
-    //     frequency = 0.0075f;
-    //     samplePoint = new Vector3((position.x + x + 6.2343f), y + 34.2365f, (position.z + z + 234.43986f)) * frequency;
-    //     float amplitude = 0.15f + Utils.Get3DNoise(noiseGenerator, samplePoint, 1) * 0.025f;
-
-    //     returnValue -= overhangsHeightCurve.Evaluate(scaledHeight) * overhangsDensityCurve.Evaluate(scaledDensity) * noise * amplitude;
-
-    //     //Caves Noise
-
-    //     frequency = 0.015f;
-    //     samplePoint = new Vector3((position.x + x + 0.0244f), y + 0.735f, (position.z + z + 0.055f)) * frequency;
-    //     noise = (Utils.Get3DNoise(noiseGenerator, samplePoint, 1) + 1f) / 2f;
-
-    //     returnValue += cavesHeightCurve.Evaluate(scaledHeight) * cavesDensityCurve.Evaluate(scaledDensity) * noise * 0.6f;
-
-    //     return returnValue;
-    //     // return Mathf.Clamp(returnValue, -1f, 1f);
-    // }
 
     float GenerateNoise(int x, int y, int z)
     {

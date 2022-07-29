@@ -6,7 +6,6 @@ public class Biomes : MonoBehaviour
 {
     public Biome[] biomes;
     public int biomeTextureSize;
-    Noise noiseGenerator = new Noise(3);
 
     public string CalculateBiomeName(Vector3 pos, float scaledHeight)
     {
