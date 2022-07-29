@@ -11,15 +11,17 @@ public class TerrainChunk : MonoBehaviour
     MeshFilter meshFilter;
     MeshRenderer meshRenderer;
     MeshCollider meshCollider;
+    FloraSpawner floraSpawner;
     Mesh mesh;
     List<Vector3> vertices = new List<Vector3>();
     List<Vector2> uvs = new List<Vector2>();
     List<int> triangles = new List<int>();
-    float[,,] chunkDensityMap;
+    float[,,] densityMap;
+    int[,,] biomesMap;
     float [,] scaledHeightMap;
     Vector3Int coords;
     Noise noiseGenerator = new Noise();
-    Vector3 position
+    public Vector3 position
     {
         get
         {
@@ -28,19 +30,22 @@ public class TerrainChunk : MonoBehaviour
     }
     bool meshDataReady = false, meshRendered = false;
     AnimationCurve heightMapCurve, cavesDensityCurve, cavesHeightCurve, overhangsHeightCurve, overhangsDensityCurve;
+    AnimationCurve[] biomesHeightMask;
 
     void Update()
     {
         if (meshDataReady && !meshRendered)
         {
+            StartCoroutine(floraSpawner.SpawnFlora());
             CreateMesh();
             UpdateMesh();
         }
     }
 
-    public float SampleScaledHeightMap (Vector3 pos)
+    public float SampleScaledHeightMap (Vector3 pos, bool worldSpace = true)
     {
-        pos -= position;
+        if (worldSpace)
+            pos -= position;
         Vector3Int samplePos = new Vector3Int ((int)pos.x, (int)pos.y, (int)(pos.z));
 
         if (scaledHeightMap == null)
@@ -49,31 +54,16 @@ public class TerrainChunk : MonoBehaviour
         return scaledHeightMap[samplePos.x, samplePos.z];
     }
 
-    Vector2 CalculateBiomeUVs (Vector3 pos)
+    public int SampleBiomeMap (Vector3 pos, bool worldSpace = true)
     {
-        Vector3Int posRelativeToChunk = new Vector3Int ((int)(pos.x - position.x), 0, (int)(pos.z - position.z));
-        float[] biomesValue = new float [biomesHandler.biomes.Length];
-        int maxBiomeIndex = biomesHandler.CalculateBiome(pos, scaledHeightMap[posRelativeToChunk.x, posRelativeToChunk.z], biomesValue);
-        float maxblend = biomesValue[maxBiomeIndex];
-        float secondMaxBlend = 0f;
-        int secondMaxBiomeIndex = -1;
+        if (worldSpace)
+            pos -= position;
+        Vector3Int samplePos = new Vector3Int ((int)pos.x, (int)pos.y, (int)(pos.z));
 
-        for (int i=0; i<biomesHandler.biomes.Length; i++)
-        {
-            if (biomesValue[i] > secondMaxBlend && biomesValue[i] < maxblend)
-            {
-                secondMaxBlend = biomesValue[i];
-                secondMaxBiomeIndex = i;
-            }
-        }
-        if (secondMaxBiomeIndex == -1)
-        {
-            secondMaxBiomeIndex = maxBiomeIndex;
-            secondMaxBlend = maxblend;
-        }
-        float sum = maxblend + secondMaxBlend;
-        return new Vector2 (maxBiomeIndex, 0);
-        // return new Vector2 (maxBiomeIndex + maxblend/sum, secondMaxBiomeIndex + secondMaxBlend/sum);
+        if (biomesMap == null)
+            return -1;
+
+        return biomesMap[samplePos.x, samplePos.y, samplePos.z];
     }
 
     public void Init(UnderwaterTerrain t, Vector3Int pos)
@@ -83,16 +73,23 @@ public class TerrainChunk : MonoBehaviour
         coords = pos;
         transform.position = terrain.terrainCentre + coords * terrain.chunkSize - new Vector3(1f, 0f, 1f) * terrain.chunkSize / 2f;
         transform.parent = terrain.transform;
+        gameObject.layer = LayerMask.NameToLayer("Terrain");
 
         meshFilter = gameObject.AddComponent<MeshFilter>();
         meshRenderer = gameObject.AddComponent<MeshRenderer>();
         meshCollider = gameObject.AddComponent<MeshCollider>();
+        floraSpawner = gameObject.AddComponent<FloraSpawner>();
+        floraSpawner.Init(this, terrain, biomesHandler);
 
         heightMapCurve = new AnimationCurve(terrain.heightMapCurve.keys);
         cavesDensityCurve = new AnimationCurve(terrain.cavesDensityCurve.keys);
         overhangsDensityCurve = new AnimationCurve(terrain.overhangsDensityCurve.keys);
         cavesHeightCurve = new AnimationCurve(terrain.cavesHeightCurve.keys);
         overhangsHeightCurve = new AnimationCurve(terrain.overhangsHeightCurve.keys);
+
+        biomesHeightMask = new AnimationCurve [biomesHandler.biomes.Length];
+        for (int i=0; i<biomesHandler.biomes.Length; i++)
+            biomesHeightMask[i] = new AnimationCurve (biomesHandler.biomes[i].biomeHeightMask.keys);
 
         meshDataReady = false;
         meshRendered = false;
@@ -122,15 +119,11 @@ public class TerrainChunk : MonoBehaviour
         }
     }
 
-    float NoiseNew(int x, int y, int z)
-    {
-        if (y == terrain.terrainHeight)
-            return 1f;
-        if (y == 0)
-            return -1f;
-
+    float GenerateNoise(int x, int y, int z)
+    {    
         float noise = 0f, frequency = 0.0025f;
 
+        // Calculate height
         Vector3 samplePoint = new Vector3((position.x + x + 42.715f), 63.45f, (position.z + z + 86.918f)) * frequency;
         noise = (Utils.Get3DNoise(noiseGenerator, samplePoint, 1) + 1) / 2f;
 
@@ -142,22 +135,34 @@ public class TerrainChunk : MonoBehaviour
         noise = Mathf.Clamp(noise, 0.8f, 1.1f);
         height *= noise;
 
-        //Height Map
+        //Height Map adjustment based on another noise
         frequency = 0.01f;
         samplePoint = new Vector3((position.x + x + 0.068f), 53.65f, (position.z + z + 0.072f)) * frequency;
         height += Utils.Get3DNoise(noiseGenerator, samplePoint, 6) * 10f;
         height = Mathf.Clamp(height, 1f, terrain.terrainHeight - 1);
 
+        // Original density at this point
         float returnValue = (y - height) / terrain.terrainHeight;
         
+        // density scaled from -1 to 1
         float scaledDensity = (y - height);
         if (scaledDensity < 0f)
             scaledDensity /= height;
         else
             scaledDensity /= terrain.terrainHeight - height;
 
+        // Height at this x and z coordinates scaled from 0 to 1
         float scaledHeight = height / terrain.terrainHeight;
         scaledHeightMap[x, z] = scaledHeight;
+
+        // Biome at these coordinates
+        Vector3 posRelativeToWorld = new Vector3 (position.x + x, y, position.z + z);
+        biomesMap[x, y, z] = biomesHandler.CalculateBiome(posRelativeToWorld, scaledHeight, biomesHeightMask);
+
+        if (y == terrain.terrainHeight)
+            return 1f;
+        if (y == 0)
+            return -1f;
 
         //Overhangs noise
 
@@ -191,8 +196,9 @@ public class TerrainChunk : MonoBehaviour
 
     void GenerateChunkDensityMap()
     {
-        chunkDensityMap = new float[terrain.chunkSize + 1, terrain.terrainHeight + 1, terrain.chunkSize + 1];
+        densityMap = new float[terrain.chunkSize + 1, terrain.terrainHeight + 1, terrain.chunkSize + 1];
         scaledHeightMap = new float[terrain.chunkSize + 1, terrain.chunkSize + 1];
+        biomesMap = new int[terrain.chunkSize + 1, terrain.terrainHeight + 1, terrain.chunkSize + 1];
 
         for (int x = 0; x <= terrain.chunkSize; x++)
         {
@@ -200,12 +206,8 @@ public class TerrainChunk : MonoBehaviour
             {
                 for (int y = 0; y <= terrain.terrainHeight; y++)
                 {
-                    float noise;
-
-                    // noise = NoiseOld(x, y, z);
-                    noise = NoiseNew(x, y, z);
-
-                    chunkDensityMap[x, y, z] = noise;
+                    float noise = GenerateNoise(x, y, z);
+                    densityMap[x, y, z] = noise;
                 }
             }
         }
@@ -219,7 +221,7 @@ public class TerrainChunk : MonoBehaviour
         {
             Vector3Int index = cubePos + MarchingCubesData.VertexPositionTable[i];
 
-            if (chunkDensityMap[index.x, index.y, index.z] <= 0f)
+            if (densityMap[index.x, index.y, index.z] <= 0f)
                 configurationIndex |= (1 << i);
         }
 
@@ -252,8 +254,8 @@ public class TerrainChunk : MonoBehaviour
 
             Vector3Int vertA = pos + MarchingCubesData.VertexPositionTable[MarchingCubesData.EdgeVerticesTable[edgeIndex, 0]];
             Vector3Int vertB = pos + MarchingCubesData.VertexPositionTable[MarchingCubesData.EdgeVerticesTable[edgeIndex, 1]];
-            float valueA = chunkDensityMap[vertA.x, vertA.y, vertA.z];
-            float valueB = chunkDensityMap[vertB.x, vertB.y, vertB.z];
+            float valueA = densityMap[vertA.x, vertA.y, vertA.z];
+            float valueB = densityMap[vertB.x, vertB.y, vertB.z];
             float lerpAmount = Mathf.InverseLerp(valueA, valueB, 0f);
 
             Vector3 vertexPoint = Vector3.Lerp(vertA, vertB, lerpAmount);
@@ -262,10 +264,10 @@ public class TerrainChunk : MonoBehaviour
             if (vertexIndex == -1)
             {
                 vertices.Add(vertexPoint);    
-                Vector2 vertAUvs = CalculateBiomeUVs(position + vertA);          
-                Vector2 vertBUvs = CalculateBiomeUVs(position + vertB);
-                Vector2 lerpedUvs = Vector2.Lerp(vertAUvs, vertBUvs, lerpAmount);
-                uvs.Add(new Vector2 (Mathf.RoundToInt(lerpedUvs.x), 0));
+                float biomeAtVertA = biomesMap[vertA.x, vertA.y, vertA.z];          
+                float biomeAtVertB = biomesMap[vertB.x, vertB.y, vertB.z]; 
+                float biomeLerped = Mathf.Lerp(biomeAtVertA, biomeAtVertB, lerpAmount);
+                uvs.Add(new Vector2 (Mathf.RoundToInt(biomeLerped), 0));
                 triangles.Add(vertices.Count - 1);
             }
             else

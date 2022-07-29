@@ -12,28 +12,33 @@ public class Biomes : MonoBehaviour
     {
         float[] biomesValue = new float[biomes.Length];
         
-        return biomes[CalculateBiome(pos, scaledHeight, biomesValue)].name;
+        return biomes[CalculateBiome(pos, scaledHeight)].name;
     }
 
-    public int CalculateBiome (Vector3 pos, float scaledHeight, float[] biomesValue)
+    public int CalculateBiome (Vector3 pos, float scaledHeight, AnimationCurve[] biomeHeightMask = null)
     {
         float maxValue = 0f;
         int biomeIndex = -1;
 
         for (int i = 0; i < biomes.Length; i++)
         {
-            biomesValue[i] = biomes[i].biomeHeightMask.Evaluate(scaledHeight);
+            // Biome evaluation based on height map
+            float biomeValue;
 
+            if (biomeHeightMask == null)
+                biomeValue = biomes[i].biomeHeightMask.Evaluate(scaledHeight);
+            else
+                biomeValue = biomeHeightMask[i].Evaluate(scaledHeight);
+
+            // Biome noise calculation
             float noise = 0f;
-
             Vector3 samplePoint = new Vector3((pos.x + 232.243f), 234.23f, (pos.z + 2.2348f)) * biomes[i].noiseFrequency;
             noise = Utils.Get3DNoise(noiseGenerator, samplePoint, 1) * biomes[i].noiseAmplitude;
+            biomeValue += noise;
 
-            biomesValue[i] += noise;
-
-            if (biomesValue[i] > maxValue)
+            if (biomeValue > maxValue)
             {
-                maxValue = biomesValue[i];
+                maxValue = biomeValue;
                 biomeIndex = i;
             }
         }

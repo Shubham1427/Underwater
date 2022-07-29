@@ -607,7 +607,7 @@ GameObject:
   - component: {fileID: 1260785449}
   - component: {fileID: 1260785450}
   - component: {fileID: 1260785451}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Terrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -954,7 +954,11 @@ MonoBehaviour:
     noiseAmplitude: 0
     noiseFrequency: 0
     biomeGroundTexture: {fileID: 2800000, guid: 77e1f697e8989dd4192c24e5c2e4fe5c, type: 3}
-  - name: Shallows 1
+    floraDensityFrequency: 0
+    plantFrequency: 0
+    plantThreshold: 0
+    plantPrefab: {fileID: 0}
+  - name: Green Shallows
     biomeHeightMask:
       serializedVersion: 2
       m_Curve:
@@ -1009,7 +1013,11 @@ MonoBehaviour:
     noiseAmplitude: 0.1
     noiseFrequency: 0.005
     biomeGroundTexture: {fileID: 2800000, guid: 77e1f697e8989dd4192c24e5c2e4fe5c, type: 3}
-  - name: Shallows 2
+    floraDensityFrequency: 0.008
+    plantFrequency: 0.9
+    plantThreshold: 0.826
+    plantPrefab: {fileID: 7137176489252475553, guid: da35fe8a63c792a47a7a29cb9b55bc08, type: 3}
+  - name: Dark Shallows
     biomeHeightMask:
       serializedVersion: 2
       m_Curve:
@@ -1064,6 +1072,10 @@ MonoBehaviour:
     noiseAmplitude: 0
     noiseFrequency: 0
     biomeGroundTexture: {fileID: 2800000, guid: a004bdb190bf96844845020822ced175, type: 3}
+    floraDensityFrequency: 0.012
+    plantFrequency: 1
+    plantThreshold: 0.833
+    plantPrefab: {fileID: 5266472642799874926, guid: 1361c63aef386fd4aa38d81c189f96ef, type: 3}
   - name: Deeps
     biomeHeightMask:
       serializedVersion: 2
@@ -1110,6 +1122,10 @@ MonoBehaviour:
     noiseAmplitude: 0
     noiseFrequency: 0
     biomeGroundTexture: {fileID: 2800000, guid: 8cbb663eccc251c43a481b122430d6df, type: 3}
+    floraDensityFrequency: 1
+    plantFrequency: 0.5
+    plantThreshold: 0.92
+    plantPrefab: {fileID: 8752274418238061942, guid: b27504559f18f3348af7890be90a4396, type: 3}
   biomeTextureSize: 512
 --- !u!1 &1768824134
 GameObject:
