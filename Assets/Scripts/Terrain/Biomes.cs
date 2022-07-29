@@ -32,8 +32,8 @@ public class Biomes : MonoBehaviour
 
             // Biome noise calculation
             float noise = 0f;
-            Vector3 samplePoint = new Vector3((pos.x + 232.243f), 234.23f, (pos.z + 2.2348f)) * biomes[i].noiseFrequency;
-            noise = Utils.Get3DNoise(noiseGenerator, samplePoint, 1) * biomes[i].noiseAmplitude;
+            Vector3 samplePoint = new Vector3((pos.x + 232.243f), i+234.23f, (pos.z + 2.2348f)) * biomes[i].noiseFrequency;
+            noise = Utils.Get3DNoise(samplePoint, 1) * biomes[i].noiseAmplitude;
             biomeValue += noise;
 
             if (biomeValue > maxValue)

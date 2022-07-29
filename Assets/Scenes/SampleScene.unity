@@ -660,32 +660,32 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.30312952
-      value: 0.12736176
-      inSlope: 1.2068524
-      outSlope: 1.2068524
+      time: 0.3489593
+      value: 0.023701716
+      inSlope: 0.18927583
+      outSlope: 0.18927583
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
+      inWeight: 0.76727974
       outWeight: 0.19986603
     - serializedVersion: 3
-      time: 0.38805842
-      value: 0.44520542
-      inSlope: 1.4091302
-      outSlope: 1.4091302
+      time: 0.36722204
+      value: 0.48762485
+      inSlope: 0.71778524
+      outSlope: 0.71778524
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.33333334
+      outWeight: 0.38631696
     - serializedVersion: 3
-      time: 0.6234279
-      value: 0.5883929
-      inSlope: 0.95774144
-      outSlope: 0.95774144
+      time: 0.6525875
+      value: 0.55305356
+      inSlope: 0.68686754
+      outSlope: 0.68686754
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.40048218
-      outWeight: 0.33333334
+      inWeight: 0.39546433
+      outWeight: 1
     - serializedVersion: 3
       time: 0.74611205
       value: 0.9811105
@@ -755,12 +755,12 @@ MonoBehaviour:
     - serializedVersion: 3
       time: -0.9997894
       value: 0.0032886267
-      inSlope: -0.010212245
-      outSlope: -0.010212245
+      inSlope: 3.4254606
+      outSlope: 3.4254606
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 1
+      outWeight: 0.31276444
     - serializedVersion: 3
       time: -0.83960545
       value: 0.78653497
@@ -771,17 +771,17 @@ MonoBehaviour:
       inWeight: 0.33333334
       outWeight: 0.12496379
     - serializedVersion: 3
-      time: -0.5730568
+      time: -0.5229546
       value: 0.9974426
-      inSlope: 0.17921904
-      outSlope: 0.17921904
+      inSlope: 0.25906754
+      outSlope: 0.25906754
       tangentMode: 0
       weightedMode: 0
-      inWeight: 1
+      inWeight: 0.8202563
       outWeight: 1
     - serializedVersion: 3
-      time: -0.0026154388
-      value: 0.04068984
+      time: 0.00025321357
+      value: 0.05042495
       inSlope: -0.49863347
       outSlope: -0.49863347
       tangentMode: 0
@@ -814,21 +814,21 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.5
-      inSlope: 1.3129164
-      outSlope: 1.3129164
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.3805648
-      value: 0.99964976
-      inSlope: -0.15116148
-      outSlope: -0.15116148
+      value: 0.31855774
+      inSlope: -0.23508394
+      outSlope: -0.23508394
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.43488324
+      inWeight: 0
+      outWeight: 0.619769
+    - serializedVersion: 3
+      time: 0.4639083
+      value: 0.99964976
+      inSlope: -0.0036735742
+      outSlope: -0.0036735742
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.4520883
       outWeight: 0.62038213
     - serializedVersion: 3
       time: 0.69680053
@@ -864,17 +864,26 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0.44632748
     - serializedVersion: 3
-      time: -0.007207701
-      value: 0.2571127
-      inSlope: 0.59441763
-      outSlope: 0.59441763
+      time: -0.10539383
+      value: 0.047354836
+      inSlope: 0.028936623
+      outSlope: 0.028936623
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.17792262
+      inWeight: 0.33333334
       outWeight: 1
     - serializedVersion: 3
-      time: 0.2486976
-      value: 0.9483299
+      time: 0.0011581797
+      value: 0.2695944
+      inSlope: 0.44583315
+      outSlope: 0.44583315
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.19148144
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.14821845
+      value: 0.9977608
       inSlope: -0.0000019628678
       outSlope: -0.0000019628678
       tangentMode: 0
@@ -882,8 +891,8 @@ MonoBehaviour:
       inWeight: 1
       outWeight: 0.7871257
     - serializedVersion: 3
-      time: 0.50539273
-      value: 0.45410877
+      time: 0.5723788
+      value: 0.4728771
       inSlope: -0.0042749215
       outSlope: -0.0042749215
       tangentMode: 0
@@ -893,8 +902,8 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 1.0041667
       value: 0.003297282
-      inSlope: -0.90383923
-      outSlope: -0.90383923
+      inSlope: -1.0875243
+      outSlope: -1.0875243
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
@@ -956,6 +965,7 @@ MonoBehaviour:
     biomeGroundTexture: {fileID: 2800000, guid: 77e1f697e8989dd4192c24e5c2e4fe5c, type: 3}
     floraDensityFrequency: 0
     plantFrequency: 0
+    floraDensityThreshold: -0.2
     plantThreshold: 0
     plantPrefab: {fileID: 0}
   - name: Green Shallows
@@ -965,24 +975,24 @@ MonoBehaviour:
       - serializedVersion: 3
         time: -0.004166667
         value: 0.0009436137
-        inSlope: 0.44523278
-        outSlope: 0.44523278
-        tangentMode: 34
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 0.22480036
-        value: 0.10288724
-        inSlope: 0.67189884
-        outSlope: 0.67189884
+        inSlope: 0.22263826
+        outSlope: 0.22263826
         tangentMode: 0
         weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.4746841
+        inWeight: 0
+        outWeight: 0.9120692
       - serializedVersion: 3
-        time: 0.34101766
-        value: 0.9999964
+        time: 0.220616
+        value: 0.17344978
+        inSlope: 2.2982068
+        outSlope: 2.2982068
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.28733274
+        outWeight: 0.20586199
+      - serializedVersion: 3
+        time: 0.45397848
+        value: 0.99950814
         inSlope: -0.00047913738
         outSlope: -0.00047913738
         tangentMode: 0
@@ -1011,10 +1021,11 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 0
     noiseAmplitude: 0.1
-    noiseFrequency: 0.005
+    noiseFrequency: 0.4
     biomeGroundTexture: {fileID: 2800000, guid: 77e1f697e8989dd4192c24e5c2e4fe5c, type: 3}
-    floraDensityFrequency: 0.008
-    plantFrequency: 0.9
+    floraDensityFrequency: 1.5
+    plantFrequency: 40
+    floraDensityThreshold: -0.5
     plantThreshold: 0.826
     plantPrefab: {fileID: 7137176489252475553, guid: da35fe8a63c792a47a7a29cb9b55bc08, type: 3}
   - name: Dark Shallows
@@ -1024,24 +1035,24 @@ MonoBehaviour:
       - serializedVersion: 3
         time: -0.004166667
         value: 0.0009436137
-        inSlope: 0.44523278
-        outSlope: 0.44523278
-        tangentMode: 34
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 0.22480036
-        value: 0.10288724
-        inSlope: 0.67189884
-        outSlope: 0.67189884
+        inSlope: 0.22263826
+        outSlope: 0.22263826
         tangentMode: 0
         weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.4746841
+        inWeight: 0
+        outWeight: 0.9120692
       - serializedVersion: 3
-        time: 0.34101766
-        value: 0.9999964
+        time: 0.220616
+        value: 0.17344978
+        inSlope: 2.2982068
+        outSlope: 2.2982068
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.28733274
+        outWeight: 0.20586199
+      - serializedVersion: 3
+        time: 0.45397848
+        value: 0.99950814
         inSlope: -0.00047913738
         outSlope: -0.00047913738
         tangentMode: 0
@@ -1069,11 +1080,12 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 0
-    noiseAmplitude: 0
-    noiseFrequency: 0
+    noiseAmplitude: 0.1
+    noiseFrequency: 0.4
     biomeGroundTexture: {fileID: 2800000, guid: a004bdb190bf96844845020822ced175, type: 3}
-    floraDensityFrequency: 0.012
-    plantFrequency: 1
+    floraDensityFrequency: 1.5
+    plantFrequency: 40
+    floraDensityThreshold: -0.5
     plantThreshold: 0.833
     plantPrefab: {fileID: 5266472642799874926, guid: 1361c63aef386fd4aa38d81c189f96ef, type: 3}
   - name: Deeps
@@ -1090,8 +1102,8 @@ MonoBehaviour:
         inWeight: 0
         outWeight: 1
       - serializedVersion: 3
-        time: 0.16776803
-        value: 0.31504345
+        time: 0.10896066
+        value: 0.30094433
         inSlope: -4.3255954
         outSlope: -4.3255954
         tangentMode: 0
@@ -1099,22 +1111,22 @@ MonoBehaviour:
         inWeight: 0.21237315
         outWeight: 0.09360808
       - serializedVersion: 3
-        time: 0.3022663
-        value: 0.04927262
-        inSlope: -0.11612387
-        outSlope: -0.11612387
+        time: 0.15102118
+        value: 0.03752335
+        inSlope: -0.14997733
+        outSlope: -0.14997733
         tangentMode: 0
         weightedMode: 0
-        inWeight: 0.33333334
+        inWeight: 1
         outWeight: 0.28363082
       - serializedVersion: 3
         time: 1.0083313
         value: 0.0009422302
-        inSlope: -0.123706244
-        outSlope: -0.123706244
+        inSlope: -0.07531507
+        outSlope: -0.07531507
         tangentMode: 0
         weightedMode: 0
-        inWeight: 0.3360817
+        inWeight: 0.2805332
         outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
@@ -1122,11 +1134,57 @@ MonoBehaviour:
     noiseAmplitude: 0
     noiseFrequency: 0
     biomeGroundTexture: {fileID: 2800000, guid: 8cbb663eccc251c43a481b122430d6df, type: 3}
-    floraDensityFrequency: 1
-    plantFrequency: 0.5
-    plantThreshold: 0.92
+    floraDensityFrequency: 10
+    plantFrequency: 50
+    floraDensityThreshold: -1
+    plantThreshold: 0.932
     plantPrefab: {fileID: 8752274418238061942, guid: b27504559f18f3348af7890be90a4396, type: 3}
   biomeTextureSize: 512
+--- !u!1 &1724073863
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1724073864}
+  - component: {fileID: 1724073865}
+  m_Layer: 0
+  m_Name: Fauna
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1724073864
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1724073863}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1724073865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1724073863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b2e524dcdd820043a8b8ea3b83612c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sharkPrefab: {fileID: 3729094853090532670, guid: aea798d5f0f229f4593cab47b48baaa3, type: 3}
 --- !u!1 &1768824134
 GameObject:
   m_ObjectHideFlags: 0

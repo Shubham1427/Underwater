@@ -44,15 +44,15 @@ public class FloraSpawner : MonoBehaviour
 
                 // Calculate noise for large chunks of plants
                 float noise = 0f;
-                Vector3 samplePoint = new Vector3((chunk.position.x + x + 2.243f), spawnPos.y + 34.23f, (chunk.position.z + z + 2.2348f)) * biomesHandler.biomes[biome].floraDensityFrequency;
-                noise = Utils.Get3DNoise(noiseGenerator, samplePoint, 1);
+                Vector3 samplePoint = new Vector3((chunk.position.x + x + 2.243f), spawnPos.y + 4.23f, (chunk.position.z + z + 2.2348f)) * biomesHandler.biomes[biome].floraDensityFrequency;
+                noise = Utils.Get3DNoise(samplePoint, 1);
 
-                if (noise < -0.2f)
+                if (noise < biomesHandler.biomes[biome].floraDensityThreshold)
                     continue;
 
                 // Calculate noise for individual plant
-                samplePoint = new Vector3((chunk.position.x + x + 624.35f), spawnPos.y + 245.567f, (chunk.position.z + z + 45.456f)) * biomesHandler.biomes[biome].plantFrequency;
-                noise = Utils.Get3DNoise(noiseGenerator, samplePoint, 1);
+                samplePoint = new Vector3((chunk.position.x + x + 4.35f), spawnPos.y + 2.567f, (chunk.position.z + z + 5.456f)) * biomesHandler.biomes[biome].plantFrequency;
+                noise = Utils.Get3DNoise(samplePoint, 1);
 
                 if (noise < biomesHandler.biomes[biome].plantThreshold)
                     continue;
@@ -66,8 +66,8 @@ public class FloraSpawner : MonoBehaviour
                 PlantGenerator pg = plant.GetComponentInChildren<PlantGenerator>();
                 if (pg != null)
                 {
-                    samplePoint = new Vector3((chunk.position.x + x + 6.743f), spawnPos.y + 4.456f, (chunk.position.z + z + 7.456f)) * 0.8f;
-                    noise = Utils.Get3DNoise(noiseGenerator, samplePoint, 1) * 10f;
+                    samplePoint = new Vector3((chunk.position.x + x + 6.743f), spawnPos.y + 4.456f, (chunk.position.z + z + 7.456f)) * 2f;
+                    noise = Utils.Get3DNoise(samplePoint, 1) * 10f;
 
                     pg.plantHeight += noise;
                 }

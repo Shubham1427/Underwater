@@ -13,6 +13,8 @@ public class Biome
 
     [Header("Flora")]
     public float floraDensityFrequency, plantFrequency;
+    [Range(-1f, 1f)]
+    public float floraDensityThreshold = -0.2f;
     [Range(0.7f, 1f)]
     public float plantThreshold = 1f;
     public GameObject plantPrefab;

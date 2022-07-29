@@ -12,18 +12,23 @@ public static class Utils
         return (value - minValue) / (maxValue - minValue);
     }
 
-    public static float Get3DNoise (Noise noiseGenerator, Vector3 samplePoint, int layers=1)
+    public static float Get3DNoise (Vector3 samplePoint, int layers=1)
     {
         float frequency = 1f, amplitude = 1f, noise = 0f;
         float maxNoise = 0f;
         for (int i=0; i<layers; i++)
         {
-            noise += noiseGenerator.Evaluate(samplePoint * frequency) * amplitude;
+            noise += Mathf.Clamp(GetFastNoise(samplePoint * frequency), -1f, 1f) * amplitude;
             maxNoise += amplitude;
             amplitude /= 2f;
             frequency *= 2f;
         }
         noise /= maxNoise;
         return noise;
+    }
+
+    public static float GetFastNoise (Vector3 samplePoint)
+    {
+        return UnderwaterTerrain.fastNoiseGenerator.GetNoise(samplePoint.x, samplePoint.y, samplePoint.z);
     }
 }
