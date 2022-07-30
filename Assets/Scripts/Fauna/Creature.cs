@@ -9,11 +9,8 @@ public class Creature : MonoBehaviour
     protected FaunaSpawner faunaSpawner;
     protected bool navigationPointFound = false, calculatingNavigationPoint = false;
     protected Vector3 navigationPoint, currentPosition, randomUnitSpherePoint;
-    public float navPointMinHeight, navPointMaxHeight;
     public int id;
-    public int maxCount;
-
-    
+    public float navPointMinHeight, navPointMaxHeight;
 
     protected virtual void GetNavigationPoint()
     {
@@ -81,7 +78,7 @@ public class Creature : MonoBehaviour
             float distance = (transform.position - navigationPoint).magnitude;
             Vector3 newPos = transform.position + transform.forward * Time.deltaTime * Mathf.Clamp01(distance) * 4f;
             transform.position = newPos;
-            
+
             if (distance < 0.2f)
             {
                 transform.position = navigationPoint;
