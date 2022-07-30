@@ -74,7 +74,7 @@ public class UnderwaterTerrain : MonoBehaviour
                                 Destroy(chunk.gameObject);         
                             }   
                         }
-                        yield return new WaitForSeconds (0.02f);
+                        yield return new WaitForSeconds (0.03f);
                     }
                 }
 
@@ -92,7 +92,7 @@ public class UnderwaterTerrain : MonoBehaviour
                         TerrainChunk chunk = new GameObject("Chunk (" + x + ", " + z + ")").AddComponent<TerrainChunk>();
                         chunk.Init(this, coords);
                         activeChunks.Add(coords, chunk);
-                        yield return new WaitForSeconds (0.02f);
+                        yield return new WaitForSeconds (0.03f);
                     }
                 }
                 
@@ -100,7 +100,7 @@ public class UnderwaterTerrain : MonoBehaviour
                 lastPlayerChunkCoords = constplayerChunkCoords;
                 updatingChunks = false;
             }
-            yield return new WaitForSeconds (0.05f);
+            yield return new WaitForSeconds (0.1f);
         }
     }
 

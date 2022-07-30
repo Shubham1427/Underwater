@@ -6,15 +6,22 @@ public class FaunaSpawner : MonoBehaviour
 {
     UnderwaterTerrain terrain;
     Ocean ocean;
-    List<Creature> greatWhiteSharks;
+    List<Creature> creatures;
     Player player;
+    int[] creatureCounts;
 
-    public GameObject sharkPrefab;
+
+    public GameObject[] creaturePrefabs;
+    public CreatureSpawnData[] creatureSpawnDatas;
 
     IEnumerator FaunaSpawnHandler ()
     {
-        FaunaInfo.numberOfsharks = 0;
-        greatWhiteSharks = new List<Creature>();
+        creatureCounts = new int [creaturePrefabs.Length];
+        for (int i=0; i<creatureCounts.Length; i++)
+            creatureCounts[i] = 0;
+
+        creatures = new List<Creature>();
+
         while (true)
         {
             if (terrain == null || ocean == null || player == null)
@@ -23,17 +30,16 @@ public class FaunaSpawner : MonoBehaviour
                 continue;
             }
 
-            // Check if any shark needs despawning
-            for (int i=0; i<greatWhiteSharks.Count; i++)
+            // Check if any creature needs despawning
+            for (int i=0; i<creatures.Count; i++)
             {
-                Creature fauna = greatWhiteSharks[i];
-                TerrainChunk faunaChunk = terrain.GetChunkFromCoords(terrain.GetChunkCoordsFromWorldPos(fauna.transform.position));
-                // Debug.Log(terrain.GetChunkCoordsFromWorldPos(fauna.transform.position));
+                Creature creature = creatures[i];
+                TerrainChunk faunaChunk = terrain.GetChunkFromCoords(terrain.GetChunkCoordsFromWorldPos(creature.transform.position));
                 if (faunaChunk == null)
                 {
-                    greatWhiteSharks.RemoveAt(i);
-                    Destroy(fauna.gameObject);
-                    FaunaInfo.numberOfsharks--;
+                    creatures.RemoveAt(i);
+                    creatureCounts[creature.id]--;
+                    Destroy(creature.gameObject);
                     i--;
                 }
                 yield return new WaitForSeconds (0.2f);
@@ -62,33 +68,47 @@ public class FaunaSpawner : MonoBehaviour
             }
 
             // Check if spawn point is underwater
-            if (spawnPoint.y >= 30f)
+            if (spawnPoint.y >= ocean.oceanLevel)
             {
                 yield return new WaitForSeconds (0.2f);
                 continue;
             }
 
-            // Check if biome is deeps
-            if (chunk.SampleBiomeMap(spawnPoint) != 3)
+            // Loop for each creature and find the one that can be spawned here
+            for (int i=0; i<creaturePrefabs.Length; i++)
             {
-                yield return new WaitForSeconds (0.2f);
-                continue;
-            }
+                //Check if height is valid
+                if (spawnPoint.y < creatureSpawnDatas[i].minSpawnHeight || spawnPoint.y > creatureSpawnDatas[i].maxSpawnHeight)
+                {
+                    yield return new WaitForSeconds (0.2f);
+                    continue;
+                }
 
-            // Check if sharks can be spawned
-            if (FaunaInfo.numberOfsharks >= 5)
-            {
-                yield return new WaitForSeconds (0.2f);
-                continue;
-            }
+                // Check if biome is valid
+                if (!creatureSpawnDatas[i].IsNativeBiome(chunk, spawnPoint))
+                {
+                    yield return new WaitForSeconds (0.2f);
+                    continue;
+                }
 
-            // Spawn Shark
-            Creature shark = Instantiate(sharkPrefab).GetComponent<Creature>();
-            shark.transform.position = spawnPoint;
-            shark.transform.parent = transform;
-            shark.Init(terrain);
-            FaunaInfo.numberOfsharks++;
-            greatWhiteSharks.Add(shark);        
+                // Check if creature cap is reached
+                if (creatureCounts[i] >= creatureSpawnDatas[i].maxCount)
+                {
+                    yield return new WaitForSeconds (0.2f);
+                    continue;
+                }
+
+
+                // Spawn Creature
+                Creature creature = Instantiate(creaturePrefabs[i]).GetComponent<Creature>();
+                creature.transform.position = spawnPoint;
+                creature.transform.parent = transform;
+                creature.Init(terrain, this);
+                creatureCounts[i]++;
+                creatures.Add(creature);        
+
+                break;
+            }
 
             yield return new WaitForSeconds (0.2f);
         }

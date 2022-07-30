@@ -1155,7 +1155,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4074553347473049476}
   - component: {fileID: 4539911905593753812}
-  - component: {fileID: 8490069267002974969}
+  - component: {fileID: 2532878029164546539}
   m_Layer: 0
   m_Name: WhiteShark
   m_TagString: Untagged
@@ -1203,7 +1203,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &8490069267002974969
+--- !u!114 &2532878029164546539
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1215,6 +1215,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8c2a3c6e8e03f541b5550107126e415, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  navPointMinHeight: 1
+  navPointMaxHeight: 40
+  id: 0
+  maxCount: 5
 --- !u!1 &3731356263242356561
 GameObject:
   m_ObjectHideFlags: 0

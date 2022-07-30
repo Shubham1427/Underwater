@@ -660,8 +660,8 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.3489593
-      value: 0.023701716
+      time: 0.3114532
+      value: 0.02605157
       inSlope: 0.18927583
       outSlope: 0.18927583
       tangentMode: 0
@@ -669,14 +669,14 @@ MonoBehaviour:
       inWeight: 0.76727974
       outWeight: 0.19986603
     - serializedVersion: 3
-      time: 0.36722204
-      value: 0.48762485
-      inSlope: 0.71778524
-      outSlope: 0.71778524
+      time: 0.33804825
+      value: 0.4640637
+      inSlope: 0.39783537
+      outSlope: 0.39783537
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.38631696
+      outWeight: 0.57757473
     - serializedVersion: 3
       time: 0.6525875
       value: 0.55305356
@@ -1184,7 +1184,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b2e524dcdd820043a8b8ea3b83612c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sharkPrefab: {fileID: 3729094853090532670, guid: aea798d5f0f229f4593cab47b48baaa3, type: 3}
+  creaturePrefabs:
+  - {fileID: 3729094853090532670, guid: aea798d5f0f229f4593cab47b48baaa3, type: 3}
+  - {fileID: 5183494911761531280, guid: ae85847bb37a36449a39d1c90841560c, type: 3}
+  creatureSpawnDatas:
+  - id: 0
+    maxCount: 5
+    minSpawnHeight: 1
+    maxSpawnHeight: 40
+    nativeBiomes: 03000000
+  - id: 1
+    maxCount: 8
+    minSpawnHeight: 50
+    maxSpawnHeight: 80
+    nativeBiomes: 01000000
 --- !u!1 &1768824134
 GameObject:
   m_ObjectHideFlags: 0

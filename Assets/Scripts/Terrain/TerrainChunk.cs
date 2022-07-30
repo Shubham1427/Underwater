@@ -135,7 +135,7 @@ public class TerrainChunk : MonoBehaviour
 
     float GenerateNoise(int x, int y, int z)
     {
-        float noise = 0f, frequency = 0.18f;
+        float noise = 0f, frequency = 0.15f;
 
         // Calculate height
         Vector3 samplePoint = new Vector3((position.x + x + 42.715f), 63.45f, (position.z + z + 86.918f)) * frequency;
